@@ -1,45 +1,152 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function HeroBanner() {
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 p-10">
+    <motion.section
+      initial={{ opacity: 0, y: 35 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="
+      relative
+      overflow-hidden
+      rounded-3xl
+      border
+      border-slate-800
+      bg-gradient-to-br
+      from-slate-900
+      via-slate-950
+      to-indigo-950
+      p-10
+      shadow-2xl
+      "
+    >
+      {/* Background Glow */}
 
-      {/* Background Circles */}
+      <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
 
-      <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10"></div>
+      <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-cyan-500/20 blur-3xl" />
 
-      <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-white/10"></div>
+      {/* Floating Dots */}
+
+      <div className="absolute right-10 top-10 h-3 w-3 rounded-full bg-cyan-400 animate-pulse" />
+
+      <div className="absolute right-24 top-20 h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
 
       <div className="relative z-10">
 
-        <p className="text-indigo-100 text-lg">
-          Welcome Back 👋
-        </p>
+        <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-300">
 
-        <h1 className="mt-3 text-5xl font-bold text-white">
-          Learn Algorithms
+          <Sparkles size={16} />
+
+          Interactive Algorithm Visualizer
+
+        </div>
+
+        <h1 className="mt-6 max-w-3xl text-5xl font-extrabold leading-tight text-white">
+
+          Visualize Algorithms
+
           <br />
-          Like Never Before.
+
+          <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+
+            Like Never Before
+
+          </span>
+
         </h1>
 
-        <p className="mt-5 max-w-2xl text-indigo-100 text-lg">
-          Step through every line of code, inspect variables,
-          visualize data structures and truly understand how
-          algorithms execute.
+        <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+
+          Learn algorithms through interactive visualizations,
+          recursion trees, code execution, variable tracking,
+          complexity analysis and beautiful animations.
+
         </p>
 
-        <Link
-          to="/sorting"
-          className="inline-flex items-center gap-2 mt-8 rounded-xl bg-white px-6 py-3 font-semibold text-indigo-700 transition hover:scale-105"
-        >
-          Start Learning
+        <div className="mt-8 flex flex-wrap gap-4">
 
-          <ArrowRight size={20} />
-        </Link>
+          <Link
+            to="/sorting"
+            className="
+            inline-flex
+            items-center
+            gap-2
+            rounded-xl
+            bg-cyan-500
+            px-6
+            py-3
+            font-semibold
+            text-slate-950
+            transition
+            hover:scale-105
+            hover:bg-cyan-400
+            "
+          >
+            Explore Algorithms
+
+            <ArrowRight size={18} />
+
+          </Link>
+
+          <Link
+            to="/sorting/merge-sort"
+            className="
+            inline-flex
+            items-center
+            gap-2
+            rounded-xl
+            border
+            border-slate-700
+            bg-slate-900/70
+            px-6
+            py-3
+            font-semibold
+            text-white
+            transition
+            hover:border-cyan-500
+            hover:bg-slate-800
+            "
+          >
+            <PlayCircle size={18} />
+
+            Continue Learning
+
+          </Link>
+
+        </div>
+
+        {/* Bottom Stats */}
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+
+          <div className="rounded-2xl bg-slate-900/60 p-4 border border-slate-800">
+            <p className="text-3xl font-bold text-cyan-400">30+</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Algorithms
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-slate-900/60 p-4 border border-slate-800">
+            <p className="text-3xl font-bold text-indigo-400">100%</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Interactive
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-slate-900/60 p-4 border border-slate-800">
+            <p className="text-3xl font-bold text-green-400">7</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Sorting Visualizers
+            </p>
+          </div>
+
+        </div>
 
       </div>
 
-    </section>
+    </motion.section>
   );
 }

@@ -1,63 +1,305 @@
-type CodePanelProps = {
-  currentLine: number
+import { motion } from "framer-motion";
+
+
+interface Props {
+
+  currentLine:number;
+
 }
 
-function CodePanel({ currentLine }: CodePanelProps) {
-  const code = [
-    "for (i = 0; i < n - 1; i++) {",
-    "    for (j = 0; j < n - i - 1; j++) {",
-    "        if (arr[j] > arr[j + 1]) {",
-    "            swap(arr[j], arr[j + 1]);",
-    "        }",
-    "    }",
-    "}",
-  ]
+
+
+
+const codeLines = [
+
+  "function mergeSort(arr){",
+
+  "   if(arr.length <= 1)",
+
+  "       return arr;",
+
+
+  "   mid = divide array;",
+
+
+  "   left = mergeSort(left);",
+
+
+  "   right = mergeSort(right);",
+
+
+  "   return merge(left,right);",
+
+
+  "}",
+
+
+  "",
+
+
+  "function merge(left,right){",
+
+
+  "   compare elements;",
+
+
+  "   select smaller value;",
+
+
+  "   add into result array;",
+
+
+  "   return sorted array;",
+
+
+  "}"
+
+];
+
+
+
+
+
+
+
+export default function CodePanel({
+
+  currentLine,
+
+}:Props){
+
+
 
   return (
-    <div className="h-full rounded-xl border border-slate-800 bg-slate-900 overflow-hidden">
 
-      <div className="border-b border-slate-800 px-4 py-3">
-        <h2 className="font-semibold">
-          Code
+    <div
+
+      className="
+      rounded-3xl
+      border
+      border-slate-800
+      bg-slate-900
+      p-5
+      shadow-xl
+      "
+
+    >
+
+
+
+      {/* Header */}
+
+
+
+      <div className="mb-4">
+
+
+        <h2
+
+          className="
+          text-xl
+          font-bold
+          text-white
+          "
+
+        >
+
+          Merge Sort Code
+
         </h2>
 
-        <p className="text-xs text-slate-500 mt-1">
-          C++ • Bubble Sort
+
+        <p
+
+          className="
+          text-sm
+          text-slate-400
+          "
+
+        >
+
+          Current execution line
+
         </p>
+
+
       </div>
 
-      <div className="p-4 font-mono text-sm">
 
-        {code.map((line, index) => {
-          const lineNumber = index + 1
-          const isActive = lineNumber === currentLine
 
-          return (
-            <div
+
+
+
+
+
+      {/* Code Area */}
+
+
+
+      <div
+
+        className="
+        rounded-2xl
+        bg-black/40
+        p-3
+        font-mono
+        text-xs
+        "
+
+      >
+
+
+
+        {
+
+          codeLines.map((line,index)=>(
+
+
+            <motion.div
+
+
               key={index}
-              className={`flex rounded px-2 py-1 transition-all duration-200 ${
-                isActive
-                  ? "bg-indigo-500/20 text-indigo-300 border-l-2 border-indigo-500"
-                  : "text-slate-400"
-              }`}
+
+
+
+              animate={{
+
+                backgroundColor:
+
+                currentLine === index
+
+                ?
+
+                "rgba(6,182,212,0.25)"
+
+                :
+
+                "transparent"
+
+
+              }}
+
+
+
+              className={`
+
+              flex
+
+              gap-3
+
+              rounded-lg
+
+              px-2
+
+              py-1
+
+
+              ${
+
+                currentLine === index
+
+                ?
+
+                "text-cyan-300"
+
+                :
+
+                "text-slate-400"
+
+              }
+
+
+              `}
+
+
             >
 
-              <span className="w-8 text-slate-600 select-none">
-                {lineNumber}
+
+
+              <span
+
+                className="
+                w-5
+                text-right
+                text-slate-600
+                "
+
+              >
+
+                {index+1}
+
               </span>
+
+
+
 
               <span>
+
                 {line}
+
               </span>
 
-            </div>
-          )
-        })}
+
+
+            </motion.div>
+
+
+
+          ))
+
+        }
+
+
+
 
       </div>
 
-    </div>
-  )
-}
 
-export default CodePanel
+
+
+
+
+
+
+      {/* Current Operation */}
+
+
+
+      <div
+
+        className="
+        mt-4
+        rounded-xl
+        border
+        border-cyan-500/20
+        bg-cyan-500/10
+        p-3
+        "
+
+      >
+
+
+        <p
+
+          className="
+          text-xs
+          text-cyan-200
+          "
+
+        >
+
+          🔥 Highlighted line shows the current Merge Sort execution step.
+
+        </p>
+
+
+      </div>
+
+
+
+
+    </div>
+
+  );
+
+}

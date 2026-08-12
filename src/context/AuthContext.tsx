@@ -1,12 +1,15 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import {
   createContext,
   useContext,
   useEffect,
   useState,
 } from "react";
+
 import type { ReactNode } from "react";
 
-import { 
+import {
   onAuthStateChanged,
   signInWithPopup,
   signOut,
@@ -15,121 +18,317 @@ import {
   updateProfile,
 } from "firebase/auth";
 
-import type { 
-  User, 
-  UserCredential 
-} from "firebase/auth";
+import type { User } from "firebase/auth";
 
-import { auth, googleProvider } from "../firebase/firebase";
+import {
+  auth,
+  googleProvider,
+} from "../firebase/firebase";
+
+
 
 interface AuthContextType {
+
   user: User | null;
+
   loading: boolean;
 
-  login: (
-    email: string,
-    password: string
-  ) => Promise<UserCredential>;
 
-  signup: (
-  name: string,
-  email: string,
-  password: string
- ) => Promise<UserCredential>;
-  googleLogin: () => Promise<UserCredential>;
+  login:
+  (
+    email:string,
+    password:string
+  )=>Promise<void>;
 
-  logout: () => Promise<void>;
+
+  signup:
+  (
+    name:string,
+    email:string,
+    password:string
+  )=>Promise<void>;
+
+
+  googleLogin:
+  ()=>Promise<void>;
+
+
+  logout:
+  ()=>Promise<void>;
+
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
+
+const AuthContext =
+createContext<AuthContextType | null>(null);
+
+
+
+interface Props{
+
+  children:ReactNode;
+
 }
+
+
+
+let googleLoginRunning = false;
+
+
 
 export function AuthProvider({
-  children,
-}: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  children
+}:Props){
 
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (currentUser) => {
-        setUser(currentUser);
-        setLoading(false);
-      }
-    );
 
-    return unsubscribe;
-  }, []);
+const [user,setUser] =
+useState<User | null>(null);
 
-  async function login(
-    email: string,
-    password: string
-  ): Promise<UserCredential> {
-    return signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+
+
+const [loading,setLoading] =
+useState(true);
+
+
+
+
+
+useEffect(()=>{
+
+
+const unsubscribe =
+onAuthStateChanged(
+  auth,
+  (currentUser)=>{
+
+    setUser(currentUser);
+
+    setLoading(false);
+
   }
-  async function signup(
-  name: string,
-  email: string,
-  password: string
-): Promise<UserCredential> {
+);
 
-  const userCredential =
-    await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
 
-  await updateProfile(
-    userCredential.user,
-    {
-      displayName: name,
-    }
-  );
 
-  return userCredential;
-}
-  async function googleLogin(): Promise<UserCredential> {
-    return signInWithPopup(auth, googleProvider);
-  }
+return unsubscribe;
 
-  async function logout(): Promise<void> {
-    await signOut(auth);
-  }
 
-  const value: AuthContextType = {
-    user,
-    loading,
-    login,
-    signup,
-    googleLogin,
-    logout,
-  };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+},[]);
+
+
+
+
+
+
+
+async function login(
+email:string,
+password:string
+){
+
+
+await signInWithEmailAndPassword(
+  auth,
+  email,
+  password
+);
+
+
 }
 
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
 
-  if (!context) {
-    throw new Error(
-      "useAuth must be used inside AuthProvider"
-    );
+
+
+
+
+
+
+async function signup(
+name:string,
+email:string,
+password:string
+){
+
+
+const result =
+await createUserWithEmailAndPassword(
+  auth,
+  email,
+  password
+);
+
+
+
+await updateProfile(
+  result.user,
+  {
+    displayName:name
   }
+);
 
-  return context;
+
+
+}
+
+
+
+
+
+
+
+
+
+async function googleLogin(){
+
+
+
+if(googleLoginRunning){
+
+return;
+
+}
+
+
+
+try{
+
+
+googleLoginRunning = true;
+
+
+
+await signInWithPopup(
+  auth,
+  googleProvider
+);
+
+
+
+}
+
+catch(error:any){
+
+
+
+if(
+error?.code ===
+"auth/cancelled-popup-request"
+){
+
+return;
+
+}
+
+
+
+throw error;
+
+
+
+}
+
+finally{
+
+
+googleLoginRunning = false;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+async function logout(){
+
+
+await signOut(auth);
+
+
+}
+
+
+
+
+
+
+
+return (
+
+
+<AuthContext.Provider
+
+value={{
+
+user,
+
+loading,
+
+login,
+
+signup,
+
+googleLogin,
+
+logout
+
+}}
+
+>
+
+
+{children}
+
+
+</AuthContext.Provider>
+
+
+
+);
+
+
+
+}
+
+
+
+
+
+
+
+export function useAuth(){
+
+
+
+const context =
+useContext(AuthContext);
+
+
+
+if(!context){
+
+
+throw new Error(
+"useAuth must be inside AuthProvider"
+);
+
+
+}
+
+
+
+return context;
+
+
+
 }

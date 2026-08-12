@@ -1,204 +1,246 @@
-export type BubbleSortStep = {
-  step: number
-  line: number
-  array: number[]
-  variables: {
-    i: number | null
-    j: number | null
-    comparisons: number
-    swaps: number
-  }
-  comparing: number[]
-  swapping: number[]
-  sorted: number[]
-  explanation: string
+export interface BubbleSortStep {
+
+  step:number;
+
+  line:number;
+
+  array:number[];
+
+  i:number;
+
+  j:number;
+
+  comparing:number[];
+
+  swapping:number[];
+
+  sorted:number[];
+
+  explanation:string;
+
 }
 
+
+
 export function generateBubbleSortSteps(
-  input: number[]
-): BubbleSortStep[] {
-  const arr = [...input]
+initial:number[]
+){
 
-  const steps: BubbleSortStep[] = []
 
-  let comparisons = 0
-  let swaps = 0
-  let step = 0
+const arr=[...initial];
 
-  const sorted: number[] = []
+const steps:BubbleSortStep[]=[];
 
-  // Initial state
-  steps.push({
-    step: step++,
-    line: 1,
-    array: [...arr],
-    variables: {
-      i: null,
-      j: null,
-      comparisons,
-      swaps,
-    },
-    comparing: [],
-    swapping: [],
-    sorted: [],
-    explanation: "Bubble Sort is ready to begin.",
-  })
 
-  for (let i = 0; i < arr.length - 1; i++) {
-    // Line 1
-    steps.push({
-      step: step++,
-      line: 1,
-      array: [...arr],
-      variables: {
-        i,
-        j: null,
-        comparisons,
-        swaps,
-      },
-      comparing: [],
-      swapping: [],
-      sorted: [...sorted],
-      explanation: `Starting outer loop. i = ${i}.`,
-    })
+const sorted:number[]=[];
 
-    for (let j = 0; j < arr.length - i - 1; j++) {
-      // Line 2
-      steps.push({
-        step: step++,
-        line: 2,
-        array: [...arr],
-        variables: {
-          i,
-          j,
-          comparisons,
-          swaps,
-        },
-        comparing: [],
-        swapping: [],
-        sorted: [...sorted],
-        explanation: `Inner loop. j = ${j}.`,
-      })
 
-      // Line 3 - comparison
-      comparisons++
+let step=0;
 
-      steps.push({
-        step: step++,
-        line: 3,
-        array: [...arr],
-        variables: {
-          i,
-          j,
-          comparisons,
-          swaps,
-        },
-        comparing: [j, j + 1],
-        swapping: [],
-        sorted: [...sorted],
-        explanation: `Comparing ${arr[j]} and ${arr[j + 1]}.`,
-      })
 
-      if (arr[j] > arr[j + 1]) {
-        // Line 4 - swap
-        steps.push({
-          step: step++,
-          line: 4,
-          array: [...arr],
-          variables: {
-            i,
-            j,
-            comparisons,
-            swaps,
-          },
-          comparing: [],
-          swapping: [j, j + 1],
-          sorted: [...sorted],
-          explanation: `${arr[j]} is greater than ${arr[j + 1]}. Swapping them.`,
-        })
 
-        const temp = arr[j]
-        arr[j] = arr[j + 1]
-        arr[j + 1] = temp
+steps.push({
 
-        swaps++
+step:step++,
 
-        // State after swap
-        steps.push({
-          step: step++,
-          line: 4,
-          array: [...arr],
-          variables: {
-            i,
-            j,
-            comparisons,
-            swaps,
-          },
-          comparing: [],
-          swapping: [],
-          sorted: [...sorted],
-          explanation: `Swap completed. Array is now [${arr.join(", ")}].`,
-        })
-      } else {
-        steps.push({
-          step: step++,
-          line: 3,
-          array: [...arr],
-          variables: {
-            i,
-            j,
-            comparisons,
-            swaps,
-          },
-          comparing: [],
-          swapping: [],
-          sorted: [...sorted],
-          explanation: `${arr[j]} is not greater than ${arr[j + 1]}. No swap needed.`,
-        })
-      }
-    }
+line:1,
 
-    // The largest remaining element is now at the end.
-    sorted.unshift(arr.length - 1 - i)
+array:[...arr],
 
-    steps.push({
-      step: step++,
-      line: 1,
-      array: [...arr],
-      variables: {
-        i,
-        j: null,
-        comparisons,
-        swaps,
-      },
-      comparing: [],
-      swapping: [],
-      sorted: [...sorted],
-      explanation: `Pass ${i + 1} completed. The largest remaining element is in its correct position.`,
-    })
-  }
+i:-1,
 
-  // Final state
-  const allSorted = Array.from(
-    { length: arr.length },
-    (_, index) => index
-  )
+j:-1,
 
-  steps.push({
-    step: step++,
-    line: 1,
-    array: [...arr],
-    variables: {
-      i: null,
-      j: null,
-      comparisons,
-      swaps,
-    },
-    comparing: [],
-    swapping: [],
-    sorted: allSorted,
-    explanation: "Bubble Sort completed successfully!",
-  })
+comparing:[],
 
-  return steps
+swapping:[],
+
+sorted:[],
+
+explanation:
+"Bubble Sort starts by comparing adjacent elements."
+
+});
+
+
+
+
+
+for(
+let i=0;
+i<arr.length-1;
+i++
+){
+
+
+for(
+let j=0;
+j<arr.length-i-1;
+j++
+){
+
+
+steps.push({
+
+step:step++,
+
+line:6,
+
+array:[...arr],
+
+i,
+
+j,
+
+comparing:[j,j+1],
+
+swapping:[],
+
+sorted:[...sorted],
+
+explanation:
+`Comparing ${arr[j]} and ${arr[j+1]}`
+
+});
+
+
+
+if(arr[j]>arr[j+1]){
+
+
+steps.push({
+
+step:step++,
+
+line:8,
+
+array:[...arr],
+
+i,
+
+j,
+
+comparing:[],
+
+swapping:[j,j+1],
+
+sorted:[...sorted],
+
+explanation:
+`${arr[j]} is greater than ${arr[j+1]}, swapping values.`
+
+});
+
+
+
+[
+arr[j],
+arr[j+1]
+]=
+[
+arr[j+1],
+arr[j]
+];
+
+
+
+steps.push({
+
+step:step++,
+
+line:9,
+
+array:[...arr],
+
+i,
+
+j,
+
+comparing:[],
+
+swapping:[j,j+1],
+
+sorted:[...sorted],
+
+explanation:
+"Swap completed."
+
+});
+
+
+}
+
+
+}
+
+
+
+sorted.unshift(
+arr[arr.length-i-1]
+);
+
+
+
+steps.push({
+
+step:step++,
+
+line:12,
+
+array:[...arr],
+
+i,
+
+j:-1,
+
+comparing:[],
+
+swapping:[],
+
+sorted:[...sorted],
+
+explanation:
+`${arr[arr.length-i-1]} is now in correct position.`
+
+});
+
+
+}
+
+
+
+steps.push({
+
+step:step++,
+
+line:14,
+
+array:[...arr],
+
+i:-1,
+
+j:-1,
+
+comparing:[],
+
+swapping:[],
+
+sorted:[
+0,
+1,
+2,
+3,
+4,
+5,
+6
+],
+
+explanation:
+"Bubble Sort completed successfully."
+
+});
+
+
+return steps;
+
 }
