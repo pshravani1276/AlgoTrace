@@ -5,12 +5,20 @@ import { useNavigate } from "react-router-dom";
 
 export default function ProfileMenu() {
   const { user, logout } = useAuth();
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
-    const handleLogout = async () => {
-  await logout();
-  navigate("/login");
-};
+  const handleLogout = async () => {
+    setLogoutError(null);
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      setLogoutError(
+        error instanceof Error ? error.message : "Unable to sign out.",
+      );
+    }
+  };
   const [open, setOpen] = useState(false);
 
   return (
@@ -26,6 +34,11 @@ const navigate = useNavigate();
 
       {open && (
         <div className="absolute right-0 mt-3 w-64 rounded-xl bg-slate-900 border border-slate-700 shadow-xl">
+          {logoutError && (
+            <p role="alert" className="border-b border-red-500/20 p-3 text-xs text-red-300">
+              {logoutError}
+            </p>
+          )}
 
           <div className="p-4 border-b border-slate-700">
 

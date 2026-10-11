@@ -23,7 +23,12 @@ name:"Searching",
 icon:<Search size={35}/>,
 items:[
 "Linear Search",
-"Binary Search"
+"Binary Search",
+"Jump Search",
+"Interpolation Search",
+"Exponential Search",
+"Fibonacci Search",
+"Hash Search"
 ]
 },
 
@@ -195,6 +200,17 @@ navigate("/sorting/merge-sort");
 
 }
 
+if(item==="Binary Search"){
+
+navigate("/searching/binary-search");
+
+}
+
+if(item==="Linear Search" || item==="Jump Search" || item==="Interpolation Search" || item==="Exponential Search" || item==="Fibonacci Search" || item==="Hash Search"){
+
+navigate(`/searching/${item.toLowerCase().replaceAll(" ", "-")}`);
+
+}
 
 }}
 

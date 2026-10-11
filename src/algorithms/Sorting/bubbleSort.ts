@@ -211,7 +211,7 @@ explanation:
 
 steps.push({
 
-step:step++,
+step:step,
 
 line:14,
 

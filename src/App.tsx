@@ -13,89 +13,63 @@ import { lazy, Suspense } from "react";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import Categories from "./pages/Categories";
-import Sorting from "./pages/Sorting";
-
-// ============================================================
-// WORKING SORTING PAGES
-// Keep these exactly as your current working pages.
-// ============================================================
-
-import BubbleSort from "./pages/BubbleSort";
-import SelectionSort from "./pages/SelectionSort";
-import InsertionSort from "./pages/InsertionSort";
-import MergeSort from "./pages/MergeSort";
-import QuickSort from "./pages/QuickSort";
-import HeapSort from "./pages/HeapSort";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import ProgressNotifications from "./components/ProgressNotifications";
 
 // ============================================================
 // OTHER PAGES
-//
-// lazy loading prevents one broken page export from crashing
-// the entire application while the rest of the project runs.
 // ============================================================
+
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Categories = lazy(() => import("./pages/Categories"));
+const Sorting = lazy(() => import("./pages/Sorting"));
+const BubbleSort = lazy(() => import("./pages/BubbleSort"));
+const SelectionSort = lazy(() => import("./pages/SelectionSort"));
+const InsertionSort = lazy(() => import("./pages/InsertionSort"));
+const MergeSort = lazy(() => import("./pages/MergeSort"));
+const QuickSort = lazy(() => import("./pages/QuickSort"));
+const HeapSort = lazy(() => import("./pages/HeapSort"));
+const BreadthFirstSearch = lazy(() =>
+  import("./pages/Graph/BreadthFirstSearch"),
+);
+const BinarySearch = lazy(() => import("./pages/BinarySearch"));
 
 const Searching = lazy(() =>
   import("./pages/Searching").then((module) => ({
-    default:
-      module.default ??
-      (module as any).Searching ??
-      PageFallback,
+    default: module.default ?? PageFallback,
   })),
 );
 
-const Tree = lazy(() =>
-  import("./pages/Tree").then((module) => ({
-    default:
-      module.default ??
-      (module as any).Tree ??
-      PageFallback,
+const SearchAlgorithmPage = lazy(() =>
+  import("./pages/SearchAlgorithm").then((module) => ({
+    default: module.default,
   })),
 );
 
+const Tree = lazy(() => Promise.resolve({ default: PageFallback }));
+
+// IMPORTANT:
+// Explicitly load Graph/index.tsx.
+// This avoids resolving another Graph.tsx file.
 const Graph = lazy(() =>
-  import("./pages/Graph").then((module) => ({
-    default:
-      module.default ??
-      (module as any).Graph ??
-      PageFallback,
+  import("./pages/Graph/index").then((module) => ({
+    default: module.default,
   })),
 );
 
 const Arrays = lazy(() =>
   import("./pages/Arrays").then((module) => ({
-    default:
-      module.default ??
-      (module as any).Arrays ??
-      PageFallback,
+    default: module.default ?? PageFallback,
   })),
 );
 
-const Profile = lazy(() =>
-  import("./pages/Profile").then((module) => ({
-    default:
-      module.default ??
-      (module as any).Profile ??
-      PageFallback,
-  })),
-);
+const Profile = lazy(() => Promise.resolve({ default: PageFallback }));
 
-const Settings = lazy(() =>
-  import("./pages/Settings").then((module) => ({
-    default:
-      module.default ??
-      (module as any).Settings ??
-      PageFallback,
-  })),
-);
+const Settings = lazy(() => Promise.resolve({ default: PageFallback }));
 
 const ForgetPassword = lazy(() =>
   import("./pages/ForgetPassword").then((module) => ({
-    default:
-      module.default ??
-      (module as any).ForgetPassword ??
-      PageFallback,
+    default: module.default ?? PageFallback,
   })),
 );
 
@@ -127,11 +101,13 @@ function PageLoading() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950">
       <div className="text-center">
+
         <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-slate-700 border-t-cyan-400" />
 
         <p className="mt-4 text-sm text-slate-400">
           Loading AlgoTrace...
         </p>
+
       </div>
     </div>
   );
@@ -144,7 +120,9 @@ function PageLoading() {
 export default function App() {
   return (
     <BrowserRouter>
+
       <Suspense fallback={<PageLoading />}>
+
         <Routes>
 
           {/* ==================================================
@@ -166,8 +144,9 @@ export default function App() {
             element={<ForgetPassword />}
           />
 
+          <Route element={<ProtectedRoute />}>
           {/* ==================================================
-              DASHBOARD
+              DEFAULT
           ================================================== */}
 
           <Route
@@ -179,6 +158,10 @@ export default function App() {
               />
             }
           />
+
+          {/* ==================================================
+              DASHBOARD
+          ================================================== */}
 
           <Route
             path="/dashboard"
@@ -247,14 +230,46 @@ export default function App() {
           />
 
           <Route
+            path="/binary-search"
+            element={<BinarySearch />}
+          />
+
+          <Route
+            path="/searching/binary-search"
+            element={<BinarySearch />}
+          />
+
+          <Route
+            path="/searching/:algorithm"
+            element={<SearchAlgorithmPage />}
+          />
+
+          <Route
             path="/tree"
             element={<Tree />}
           />
+
+          {/* ==================================================
+              GRAPH CATEGORY
+          ================================================== */}
 
           <Route
             path="/graph"
             element={<Graph />}
           />
+
+          {/* ==================================================
+              BREADTH FIRST SEARCH
+          ================================================== */}
+
+          <Route
+            path="/graph/bfs"
+            element={<BreadthFirstSearch />}
+          />
+
+          {/* ==================================================
+              ARRAYS
+          ================================================== */}
 
           <Route
             path="/arrays"
@@ -277,7 +292,7 @@ export default function App() {
 
           {/* ==================================================
               OLD SORTING LINKS
-              Keep these so previous links continue working.
+              Keep these working.
           ================================================== */}
 
           <Route
@@ -353,9 +368,14 @@ export default function App() {
               />
             }
           />
+          </Route>
 
         </Routes>
+
       </Suspense>
+
+      <ProgressNotifications />
+
     </BrowserRouter>
   );
 }

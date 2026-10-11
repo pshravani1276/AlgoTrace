@@ -1,7 +1,19 @@
 import { motion } from "framer-motion";
 
-import type { MergeVariables } from "../algorithms/Sorting/MergeSort";
-
+interface MergeVariables {
+  left: number | string;
+  right: number | string;
+  mid: number | string;
+  recursionLevel: number | string;
+  comparisons: number | string;
+  merges: number | string;
+  i: number | string;
+  j: number | string;
+  k: number | string;
+  leftArray: (number | string)[];
+  rightArray: (number | string)[];
+  comparing: (number | string)[];
+}
 
 interface Props {
 
@@ -348,7 +360,7 @@ export default function VariablePanel({
 
             {
 
-              variables.leftArray.map((value,index)=>(
+              variables.leftArray.map((value, index) => (
 
 
                 <motion.span
@@ -423,7 +435,7 @@ export default function VariablePanel({
 
             {
 
-              variables.rightArray.map((value,index)=>(
+              variables.rightArray.map((value, index) => (
 
 
                 <motion.span
@@ -518,7 +530,7 @@ export default function VariablePanel({
             :
 
 
-            variables.comparing.map((value,index)=>(
+            variables.comparing.map((value, index) => (
 
 
               <motion.div

@@ -3,7 +3,6 @@ import {
   ArrowRight,
   BarChart3,
   Boxes,
-  ChevronRight,
   GitBranch,
   Layers3,
   Search,

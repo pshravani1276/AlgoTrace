@@ -256,12 +256,6 @@ export default function SelectionSortVisualizer() {
     swapping.length === 0 &&
     !isLast;
 
-  const isCapturingMinimum =
-    currentMinIndex >= 0 &&
-    !sorted.includes(currentMinIndex) &&
-    !swapping.length &&
-    currentJ !== currentMinIndex;
-
   const isLocking =
     swapping.length > 0;
 

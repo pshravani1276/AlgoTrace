@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -70,13 +70,13 @@ const algorithms = [
 ];
 
 export default function Sorting() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-
       <div className="mx-auto max-w-7xl px-6 py-12">
 
         <div className="mb-12 text-center">
-
           <h1 className="text-5xl font-bold">
             Sorting Algorithms
           </h1>
@@ -84,7 +84,6 @@ export default function Sorting() {
           <p className="mt-4 text-slate-400 text-lg">
             Choose an algorithm to explore with interactive visualizations.
           </p>
-
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
@@ -93,6 +92,7 @@ export default function Sorting() {
 
             <motion.div
               key={algo.title}
+              onClick={() => navigate(algo.path)}
               whileHover={{
                 y: -8,
                 scale: 1.03,
@@ -101,32 +101,33 @@ export default function Sorting() {
                 duration: 0.25,
               }}
               className="
-              group
-              relative
-              overflow-hidden
-              rounded-3xl
-              border
-              border-slate-800
-              bg-slate-900
-              p-7
-              shadow-xl
+                group
+                relative
+                cursor-pointer
+                overflow-hidden
+                rounded-3xl
+                border
+                border-slate-800
+                bg-slate-900
+                p-7
+                shadow-xl
               "
             >
 
               <div
                 className={`
-                absolute
-                -right-12
-                -top-12
-                h-44
-                w-44
-                rounded-full
-                bg-gradient-to-br
-                ${algo.color}
-                opacity-20
-                blur-3xl
-                transition
-                group-hover:opacity-40
+                  absolute
+                  -right-12
+                  -top-12
+                  h-44
+                  w-44
+                  rounded-full
+                  bg-gradient-to-br
+                  ${algo.color}
+                  opacity-20
+                  blur-3xl
+                  transition
+                  group-hover:opacity-40
                 `}
               />
 
@@ -134,12 +135,12 @@ export default function Sorting() {
 
                 <div
                   className={`
-                  inline-flex
-                  rounded-2xl
-                  bg-gradient-to-br
-                  ${algo.color}
-                  p-4
-                  text-white
+                    inline-flex
+                    rounded-2xl
+                    bg-gradient-to-br
+                    ${algo.color}
+                    p-4
+                    text-white
                   `}
                 >
                   {algo.icon}
@@ -161,6 +162,9 @@ export default function Sorting() {
 
                   <Link
                     to={algo.path}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                    }}
                     className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300"
                   >
                     Open
@@ -179,7 +183,6 @@ export default function Sorting() {
         </div>
 
       </div>
-
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { searchAlgorithms } from "../data/searchCatalog";
 
 import CodingStreak from "./CodingStreak";
 
@@ -27,6 +28,7 @@ export default function Navbar() {
   const [showCategories, setShowCategories] = useState(false);
 
   const [search, setSearch] = useState("");
+  const [searchMessage, setSearchMessage] = useState("");
 
   /*
    * ============================================================
@@ -59,37 +61,32 @@ export default function Navbar() {
    * ============================================================
    */
 
+  const searchResults = searchAlgorithms(search);
+
   const handleSearch = () => {
+    if (!search.trim()) {
+      setSearchMessage("Enter an algorithm or topic to search.");
+      return;
+    }
 
-  const query = search.trim().toLowerCase();
+    const firstResult = searchResults[0];
+    if (!firstResult) {
+      setSearchMessage("No matching algorithms or topics found.");
+      return;
+    }
 
-  if (!query) return;
+    navigate(firstResult.path);
+    setSearch("");
+    setSearchMessage("");
+    setShowSearch(false);
+  };
 
-
-  if(query.includes("merge")){
-    navigate("/sorting/merge-sort");
-  }
-
-  else if(query.includes("bubble")){
-    navigate("/sorting/bubble-sort");
-  }
-
-  else if(
-    query.includes("sort") ||
-    query.includes("sorting")
-  ){
-    navigate("/sorting");
-  }
-
-  else{
-    alert("Algorithm not found");
-  }
-
-
-  setSearch("");
-  setShowSearch(false);
-
-};
+  const openSearchResult = (path: string) => {
+    navigate(path);
+    setSearch("");
+    setSearchMessage("");
+    setShowSearch(false);
+  };
   /*
    * ============================================================
    * CLOSE ALL POPUPS
@@ -720,7 +717,9 @@ export default function Navbar() {
               onClick={() => {
                 setShowSearch(false);
                 setSearch("");
+                setSearchMessage("");
               }}
+              aria-label="Close search"
               className="
                 text-slate-400
                 transition
@@ -731,7 +730,11 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSearch();
+            }}
             className="
               flex
               items-center
@@ -752,13 +755,14 @@ export default function Navbar() {
               autoFocus
               value={search}
               onChange={(event) =>
-                setSearch(event.target.value)
-              }
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSearch();
+                {
+                  setSearch(event.target.value);
+                  setSearchMessage("");
                 }
-              }}
+              }
+              aria-label="Search algorithms and topics"
+              aria-autocomplete="list"
+              aria-controls="algorithm-search-results"
               placeholder="Search algorithms, topics..."
               className="
                 w-full
@@ -770,17 +774,61 @@ export default function Navbar() {
                 placeholder:text-slate-600
               "
             />
-          </div>
+            <button
+              type="submit"
+              aria-label="Submit search"
+              className="rounded-lg p-2 text-cyan-400 transition hover:bg-cyan-500/10 hover:text-cyan-300"
+            >
+              <Search size={17} />
+            </button>
+          </form>
 
-          <p
-            className="
-              mt-3
-              text-xs
-              text-slate-600
-            "
-          >
-            Press Enter to search
-          </p>
+          {search.trim() ? (
+            <div
+              id="algorithm-search-results"
+              role="listbox"
+              aria-label="Search results"
+              className="mt-3 space-y-1"
+            >
+              {searchResults.length ? (
+                searchResults.map((result) => (
+                  <button
+                    key={result.path}
+                    type="button"
+                    role="option"
+                    aria-selected="false"
+                    onClick={() => openSearchResult(result.path)}
+                    className="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                  >
+                    <span>
+                      <span className="block text-sm font-medium text-slate-100">
+                        {result.name}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-slate-500">
+                        {result.description}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-[10px] uppercase tracking-wide text-cyan-400">
+                      {result.category}
+                    </span>
+                  </button>
+                ))
+              ) : (
+                <p className="px-3 py-2 text-sm text-slate-400">
+                  No matches yet. Try “merge sort”, “binary search”, or “graph”.
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="mt-3 text-xs text-slate-600">
+              Type to see results, then press Enter or select one.
+            </p>
+          )}
+          {searchMessage && (
+            <p role="status" className="mt-2 text-xs text-amber-300">
+              {searchMessage}
+            </p>
+          )}
         </div>
       )}
 

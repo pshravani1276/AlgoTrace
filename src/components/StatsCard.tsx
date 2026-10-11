@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 interface Props {
   title: string;
   value: string;
+  detail: string;
+  progress: number;
   icon: ReactNode;
   color: string;
 }
@@ -11,6 +13,8 @@ interface Props {
 export default function StatsCard({
   title,
   value,
+  detail,
+  progress,
   icon,
   color,
 }: Props) {
@@ -137,10 +141,7 @@ export default function StatsCard({
 
         </div>
 
-        {/* Mini Progress */}
-
         <div className="mt-6">
-
           <div
             className="
               h-2
@@ -154,7 +155,7 @@ export default function StatsCard({
                 width: 0,
               }}
               animate={{
-                width: "75%",
+                width: `${Math.max(0, Math.min(progress, 100))}%`,
               }}
               transition={{
                 duration: 1,
@@ -167,55 +168,9 @@ export default function StatsCard({
               `}
             />
           </div>
-
         </div>
 
-        {/* Footer */}
-
-        <div
-          className="
-            mt-5
-            flex
-            items-center
-            justify-between
-          "
-        >
-
-          <span
-            className="
-              text-xs
-              text-slate-500
-            "
-          >
-            Updated Today
-          </span>
-
-          <span
-            className="
-              flex
-              items-center
-              gap-2
-              text-xs
-              font-semibold
-              text-green-400
-            "
-          >
-
-            <span
-              className="
-                h-2
-                w-2
-                animate-pulse
-                rounded-full
-                bg-green-400
-              "
-            />
-
-            Live
-
-          </span>
-
-        </div>
+        <p className="mt-4 text-xs text-slate-500">{detail}</p>
 
       </div>
 

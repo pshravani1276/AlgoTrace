@@ -12,6 +12,12 @@ import {
 } from "lucide-react";
 
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import {
+  getUtcDateKey,
+  getStreakStats,
+  useLearnerProgress,
+} from "../data/learnerProgress";
 
 const REQUIRED_ACTIVITIES = [
   "merge-sort",
@@ -19,122 +25,96 @@ const REQUIRED_ACTIVITIES = [
 ];
 
 export default function CodingStreak() {
-  const months = [
-    "January 2026",
-    "February 2026",
-    "March 2026",
-    "April 2026",
-    "May 2026",
-    "June 2026",
-    "July 2026",
-    "August 2026",
-    "September 2026",
-    "October 2026",
-    "November 2026",
-    "December 2026",
-  ];
-
-  const [monthIndex, setMonthIndex] = useState(7);
-
+  const { user } = useAuth();
+  const { progress, loading, error, refresh } = useLearnerProgress(
+    user?.id ?? null,
+  );
+  const { currentStreak, longestStreak } = getStreakStats(
+    progress.activityDays,
+  );
+  const [monthDate, setMonthDate] = useState(() => new Date());
   const [showWeeklyPerformance, setShowWeeklyPerformance] =
     useState(false);
 
   const [showCertificate, setShowCertificate] =
     useState(false);
-
-  /*
-   * Load completed activities when the state is created.
-   *
-   * This avoids calling setState() inside useEffect,
-   * which was causing the React hooks ESLint error.
-   */
-  const [completedActivities, setCompletedActivities] =
-    useState<string[]>(() => {
-      if (typeof window === "undefined") {
-        return [];
-      }
-
-      const saved = localStorage.getItem(
-        "algotrace_completed_activities"
-      );
-
-      if (!saved) {
-        return [];
-      }
-
-      try {
-        const parsed: unknown = JSON.parse(saved);
-
-        if (Array.isArray(parsed)) {
-          return parsed.filter(
-            (item): item is string =>
-              typeof item === "string"
-          );
-        }
-
-        return [];
-      } catch {
-        return [];
-      }
-    });
-
-  /*
-   * Certificate is unlocked only after
-   * all required activities are completed.
-   */
+  const completedActivities = progress.completedActivities;
   const certificateUnlocked =
     REQUIRED_ACTIVITIES.every((activity) =>
       completedActivities.includes(activity)
     );
-
-  /*
-   * Current active learning days.
-   */
-  const activeDays = [
-    2,
-    3,
-    4,
-    6,
-    9,
-    10,
-    11,
-    12,
-    13,
-    16,
-    17,
-    20,
-    23,
-  ];
-
-  /*
-   * Calendar days.
-   */
-  const days = Array.from(
-    { length: 31 },
-    (_, index) => index + 1
+  const monthLabel = monthDate.toLocaleDateString(undefined, {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  const monthYear = monthDate.getUTCFullYear();
+  const monthNumber = monthDate.getUTCMonth();
+  const daysInMonth = new Date(Date.UTC(monthYear, monthNumber + 1, 0)).getUTCDate();
+  const firstWeekday = new Date(Date.UTC(monthYear, monthNumber, 1)).getUTCDay();
+  const activeDays = new Set(
+    progress.activityDays
+      .filter((date) => date.startsWith(
+        `${monthYear}-${String(monthNumber + 1).padStart(2, "0")}-`,
+      ))
+      .map((date) => Number(date.slice(-2))),
   );
+  const days = Array.from({ length: daysInMonth }, (_, index) => index + 1);
+  const weekStart = new Date();
+  weekStart.setUTCHours(0, 0, 0, 0);
+  weekStart.setUTCDate(weekStart.getUTCDate() - weekStart.getUTCDay());
+  const week = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart);
+    date.setUTCDate(weekStart.getUTCDate() + index);
 
-  /*
-   * Previous month.
-   */
+    return {
+      label: date.toLocaleDateString(undefined, {
+        weekday: "long",
+        timeZone: "UTC",
+      }),
+      active: progress.activityDays.includes(getUtcDateKey(date)),
+    };
+  });
+  const activeDaysThisWeek = week.filter((day) => day.active).length;
+
   const previousMonth = () => {
-    setMonthIndex((previous) =>
-      previous === 0
-        ? months.length - 1
-        : previous - 1
+    setMonthDate((previous) =>
+      new Date(Date.UTC(previous.getUTCFullYear(), previous.getUTCMonth() - 1, 1)),
+    );
+  };
+  const nextMonth = () => {
+    setMonthDate((previous) =>
+      new Date(Date.UTC(previous.getUTCFullYear(), previous.getUTCMonth() + 1, 1)),
     );
   };
 
-  /*
-   * Next month.
-   */
-  const nextMonth = () => {
-    setMonthIndex((previous) =>
-      previous === months.length - 1
-        ? 0
-        : previous + 1
+  if (loading) {
+    return (
+      <div
+        role="status"
+        className="h-80 animate-pulse rounded-3xl border border-slate-800 bg-slate-900"
+        aria-label="Loading coding streak"
+      />
     );
-  };
+  }
+
+  if (error) {
+    return (
+      <div
+        role="alert"
+        className="rounded-3xl border border-red-500/30 bg-slate-900 p-6 text-sm text-red-200"
+      >
+        <p>{error}</p>
+        <button
+          type="button"
+          onClick={() => void refresh()}
+          className="mt-4 rounded-lg border border-red-400/30 px-3 py-2 font-semibold hover:bg-red-500/10"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -163,7 +143,7 @@ export default function CodingStreak() {
 
             <div>
               <h2 className="text-2xl font-bold text-orange-400">
-                12 Days
+                {currentStreak} {currentStreak === 1 ? "Day" : "Days"}
               </h2>
 
               <p className="text-sm text-slate-400">
@@ -195,7 +175,7 @@ export default function CodingStreak() {
           </button>
 
           <h3 className="font-semibold text-white">
-            {months[monthIndex]}
+            {monthLabel}
           </h3>
 
           <button
@@ -239,12 +219,20 @@ export default function CodingStreak() {
         {/* CALENDAR */}
 
         <div className="mt-3 grid grid-cols-7 gap-2">
+          {Array.from({ length: firstWeekday }, (_, index) => (
+            <span key={`empty-${index}`} aria-hidden="true" />
+          ))}
           {days.map((day) => {
-            const active = activeDays.includes(day);
+            const active = activeDays.has(day);
+            const isToday =
+              new Date().getUTCFullYear() === monthYear &&
+              new Date().getUTCMonth() === monthNumber &&
+              new Date().getUTCDate() === day;
 
             return (
               <div
                 key={day}
+                aria-label={`${monthLabel} ${day}${active ? ", activity completed" : ""}`}
                 className={`
                   flex
                   h-10
@@ -252,6 +240,7 @@ export default function CodingStreak() {
                   justify-center
                   rounded-xl
                   text-sm
+                  ${isToday ? "ring-1 ring-cyan-400" : ""}
                   ${
                     active
                       ? "bg-orange-500 text-white shadow-lg shadow-orange-500/30"
@@ -285,7 +274,7 @@ export default function CodingStreak() {
             </div>
 
             <span className="font-bold text-orange-400">
-              {activeDays.length}
+              {activeDays.size}
             </span>
           </div>
 
@@ -295,7 +284,7 @@ export default function CodingStreak() {
             </span>
 
             <span className="font-bold text-green-400">
-              18 Days
+              {longestStreak} Days
             </span>
           </div>
         </div>
@@ -402,56 +391,29 @@ export default function CodingStreak() {
           </div>
 
           <div className="mt-7 space-y-4">
-            <PerformanceRow
-              day="Monday"
-              value={72}
-            />
-
-            <PerformanceRow
-              day="Tuesday"
-              value={85}
-            />
-
-            <PerformanceRow
-              day="Wednesday"
-              value={64}
-            />
-
-            <PerformanceRow
-              day="Thursday"
-              value={91}
-            />
-
-            <PerformanceRow
-              day="Friday"
-              value={76}
-            />
-
-            <PerformanceRow
-              day="Saturday"
-              value={88}
-            />
-
-            <PerformanceRow
-              day="Sunday"
-              value={70}
-            />
+            {week.map((day) => (
+              <PerformanceRow
+                key={day.label}
+                day={day.label}
+                active={day.active}
+              />
+            ))}
           </div>
 
           <div className="mt-7 grid grid-cols-3 gap-3">
             <StatBox
               title="Algorithms"
-              value="12"
+              value={String(completedActivities.length)}
             />
 
             <StatBox
-              title="Steps"
-              value="86"
+              title="Active days"
+              value={String(activeDaysThisWeek)}
             />
 
             <StatBox
               title="Streak"
-              value="12d"
+              value={`${currentStreak}d`}
             />
           </div>
         </Modal>
@@ -652,10 +614,10 @@ function Modal({
 
 function PerformanceRow({
   day,
-  value,
+  active,
 }: {
   day: string;
-  value: number;
+  active: boolean;
 }) {
   return (
     <div>
@@ -665,7 +627,7 @@ function PerformanceRow({
         </span>
 
         <span className="text-slate-500">
-          {value}%
+          {active ? "Practiced" : "No activity"}
         </span>
       </div>
 
@@ -673,7 +635,7 @@ function PerformanceRow({
         <div
           className="h-full rounded-full bg-cyan-400"
           style={{
-            width: `${value}%`,
+            width: active ? "100%" : "0%",
           }}
         />
       </div>

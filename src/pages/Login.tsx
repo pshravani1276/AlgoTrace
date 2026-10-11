@@ -21,7 +21,6 @@ export default function Login() {
 
   const {
     login,
-    googleLogin,
   } = useAuth();
 
 
@@ -66,7 +65,7 @@ export default function Login() {
       );
 
 
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
 
 
     }
@@ -93,38 +92,6 @@ export default function Login() {
 
 
 
-  async function handleGoogleLogin(){
-
-
-    try{
-
-
-      setError("");
-
-
-      await googleLogin();
-
-
-      navigate("/dashboard");
-
-
-    }
-    catch(err:unknown){
-
-
-      setError(
-
-        err instanceof Error
-        ? err.message
-        : "Google login failed"
-
-      );
-
-
-    }
-
-
-  }
 
 
 
@@ -565,53 +532,6 @@ bg-slate-700
 
 </div>
 
-
-
-
-
-<button
-
-type="button"
-
-onClick={handleGoogleLogin}
-
-
-className="
-flex
-w-full
-items-center
-justify-center
-gap-3
-rounded-lg
-bg-white
-py-3
-font-medium
-text-black
-transition
-hover:bg-gray-100
-"
-
->
-
-
-<img
-
-src="https://www.svgrepo.com/show/475656/google-color.svg"
-
-alt="Google"
-
-className="
-h-5
-w-5
-"
-
-/>
-
-
-Continue with Google
-
-
-</button>
 
 
 

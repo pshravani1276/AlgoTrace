@@ -69,9 +69,9 @@ export default function AnimatedBackground() {
           }}
           className="absolute text-slate-600 font-mono select-none"
           style={{
-            left: `${Math.random() * 90}%`,
-            top: `${Math.random() * 90}%`,
-            fontSize: `${18 + Math.random() * 18}px`,
+            left: `${(index * 31 + 7) % 90}%`,
+            top: `${(index * 47 + 11) % 90}%`,
+            fontSize: `${18 + ((index * 7) % 18)}px`,
           }}
         >
           {symbol}

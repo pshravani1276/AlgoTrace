@@ -92,7 +92,7 @@ export default function HeroBanner() {
           </Link>
 
           <Link
-            to="/sorting/merge-sort"
+            to="#continue-learning"
             className="
             inline-flex
             items-center

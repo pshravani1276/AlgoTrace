@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import type { MergeNode } from "../algorithms/Sorting/mergeSort";
+import type { MergeNode } from "../algorithms/Sorting/MergeSort";
 
 type MergeNodeProps = {
   node: MergeNode;

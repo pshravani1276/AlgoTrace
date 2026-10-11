@@ -2,6 +2,7 @@ export interface MergeNode {
   id: string;
   values: number[];
   level: number;
+  visible?: boolean;
   left?: MergeNode;
   right?: MergeNode;
   state: "normal" | "active" | "completed";

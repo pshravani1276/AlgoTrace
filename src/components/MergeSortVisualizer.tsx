@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { markActivityCompleted } from "../data/learnerProgress";
 
 import {
   ChevronLeft,
@@ -11,7 +12,6 @@ import {
   CheckCircle2,
   Sparkles,
   Zap,
-  ArrowDown,
   GitBranch,
 } from "lucide-react";
 
@@ -2029,32 +2029,7 @@ function Legend({
 ========================================================= */
 
 function markMergeSortCompleted() {
-  const key =
-    "algotrace_completed_activities";
-
-  const old =
-    localStorage.getItem(key);
-
-  let data: string[] = [];
-
-  try {
-    data = old ? JSON.parse(old) : [];
-  } catch {
-    data = [];
-  }
-
-  if (!data.includes("merge-sort")) {
-    data.push("merge-sort");
-
-    localStorage.setItem(
-      key,
-      JSON.stringify(data),
-    );
-
-    window.dispatchEvent(
-      new Event("storage"),
-    );
-  }
+  markActivityCompleted("merge-sort");
 }
 
 /* =========================================================

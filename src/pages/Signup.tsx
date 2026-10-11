@@ -14,9 +14,13 @@ import { useAuth } from "../context/AuthContext";
 export default function Signup() {
   const navigate = useNavigate();
 
-  const { signup, googleLogin } = useAuth();
+  const { signup } = useAuth();
 
   const [name, setName] = useState("");
+
+  const [institution, setInstitution] = useState("");
+
+  const [phone, setPhone] = useState("");
 
   const [email, setEmail] = useState("");
 
@@ -71,23 +75,13 @@ const isPasswordValid =
     try {
       setLoading(true);
 
-      await signup(name, email, password);
+      await signup(name, institution, phone, email, password);
 
       navigate("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Signup failed");
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function handleGoogleSignup() {
-    try {
-      await googleLogin();
-
-      navigate("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
     }
   }
 
@@ -148,6 +142,40 @@ const isPasswordValid =
                 className="w-full rounded-lg bg-slate-900/70 border border-slate-700 py-3 pl-10 pr-4 text-white outline-none focus:border-indigo-500"
               />
             </div>
+          </div>
+
+          {/* Institution */}
+
+          <div>
+            <label className="block text-sm text-slate-300 mb-2">
+              Institution
+            </label>
+
+            <input
+              type="text"
+              required
+              value={institution}
+              onChange={(e) => setInstitution(e.target.value)}
+              placeholder="Enter your institution"
+              className="w-full rounded-lg bg-slate-900/70 border border-slate-700 py-3 px-4 text-white outline-none focus:border-indigo-500"
+            />
+          </div>
+
+          {/* Phone */}
+
+          <div>
+            <label className="block text-sm text-slate-300 mb-2">
+              Phone Number
+            </label>
+
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter your phone number"
+              className="w-full rounded-lg bg-slate-900/70 border border-slate-700 py-3 px-4 text-white outline-none focus:border-indigo-500"
+            />
           </div>
 
           {/* Email */}
@@ -294,34 +322,6 @@ const isPasswordValid =
               : "Create Account"}
           </button>
         </form>
-
-        {/* Divider */}
-
-        <div className="flex items-center my-6">
-          <div className="flex-1 h-px bg-slate-700"></div>
-
-          <span className="px-3 text-slate-400 text-sm">
-            OR
-          </span>
-
-          <div className="flex-1 h-px bg-slate-700"></div>
-        </div>
-
-        {/* Google Signup */}
-
-        <button
-          type="button"
-          onClick={handleGoogleSignup}
-          className="w-full bg-white hover:bg-gray-100 rounded-lg py-3 font-medium flex justify-center items-center gap-3 transition text-black"
-        >
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google"
-            className="w-5 h-5"
-          />
-
-          Continue with Google
-        </button>
 
         <p className="text-center text-slate-400 mt-8">
           Already have an account?

@@ -7,9 +7,7 @@ import {
   Gauge,
 } from "lucide-react";
 
-import {
-  generateQuickSortSteps,
-} from "../algorithms/Sorting/QuickSort";
+import { generateQuickSortSteps } from "../algorithms/Sorting/QuickSort";
 
 const INITIAL_ARRAY = [
   64,
@@ -199,30 +197,9 @@ const LANGUAGE_ICONS: Record<string, string> = {
   TypeScript: "🔷",
 };
 
-type Step = {
-  step: number;
-  line: number;
-  array: number[];
-
-  low: number;
-  high: number;
-
-  pivot: number | null;
-  pivotIndex: number | null;
-
-  comparing: number[];
-  swapping: number[];
-
-  sorted?: number[];
-
-  explanation: string;
-};
-
 export default function QuickSortVisualizer() {
   const steps = useMemo(() => {
-    return generateQuickSortSteps(
-      INITIAL_ARRAY,
-    ) as Step[];
+    return generateQuickSortSteps(INITIAL_ARRAY);
   }, []);
 
   const [currentStep, setCurrentStep] =
@@ -1438,7 +1415,7 @@ export default function QuickSortVisualizer() {
 
             <Variable
               name="PIVOT"
-              value={getValue(step?.pivot)}
+              value={getValue(step?.pivotValue)}
             />
 
             <Variable
