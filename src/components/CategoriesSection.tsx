@@ -69,15 +69,16 @@ export default function CategoriesSection() {
    * CATEGORY CLICK
    * =====================================================
    *
-   * IMPORTANT:
-   * DO NOT navigate to "/sorting".
+   * Sorting category itself opens Merge Sort directly.
    *
-   * There is no "/sorting" route.
-   *
-   * Clicking Sorting simply opens the algorithms below.
+   * Other categories continue to expand normally.
    */
-
   const handleCategoryClick = (title: string) => {
+    if (title === "Sorting") {
+      navigate("/merge-sort");
+      return;
+    }
+
     setSelected((current) =>
       current === title ? null : title
     );
@@ -87,26 +88,31 @@ export default function CategoriesSection() {
    * =====================================================
    * ALGORITHM CLICK
    * =====================================================
+   *
+   * IMPORTANT:
+   *
+   * The COMPLETE algorithm card is the clickable area.
+   *
+   * There is no separate Open button required.
+   *
+   * Example:
+   *
+   * Click anywhere on "Bubble Sort"
+   *             ↓
+   * /bubble-sort
+   *
+   * Click anywhere on "Merge Sort"
+   *             ↓
+   * /merge-sort
    */
-
   const handleAlgorithmClick = (algorithm: string) => {
     switch (algorithm) {
-      case "Merge Sort":
-        navigate("/merge-sort");
-        break;
-
-      case "Radix Sort":
-        navigate("/radix-sort");
-        break;
-
-      /*
-       * Keep your existing routes for these algorithms.
-       * If their routes already exist in your original
-       * App.tsx, they will continue working.
-       */
-
       case "Bubble Sort":
         navigate("/bubble-sort");
+        break;
+
+      case "Merge Sort":
+        navigate("/merge-sort");
         break;
 
       case "Quick Sort":
@@ -115,6 +121,46 @@ export default function CategoriesSection() {
 
       case "Insertion Sort":
         navigate("/insertion-sort");
+        break;
+
+      case "Radix Sort":
+        navigate("/radix-sort");
+        break;
+
+      case "Linear Search":
+        navigate("/linear-search");
+        break;
+
+      case "Binary Search":
+        navigate("/binary-search");
+        break;
+
+      case "Jump Search":
+        navigate("/jump-search");
+        break;
+
+      case "BFS Traversal":
+        navigate("/bfs");
+        break;
+
+      case "DFS Traversal":
+        navigate("/dfs");
+        break;
+
+      case "Dijkstra Algorithm":
+        navigate("/dijkstra");
+        break;
+
+      case "Binary Tree":
+        navigate("/binary-tree");
+        break;
+
+      case "Binary Search Tree":
+        navigate("/binary-search-tree");
+        break;
+
+      case "AVL Tree":
+        navigate("/avl-tree");
         break;
 
       default:
@@ -171,6 +217,7 @@ export default function CategoriesSection() {
                 text-left
                 transition-all
                 duration-300
+                cursor-pointer
                 ${
                   isSelected
                     ? "border-cyan-400 bg-cyan-500/[0.08] shadow-lg shadow-cyan-500/10"
@@ -265,7 +312,11 @@ export default function CategoriesSection() {
                   text-cyan-400
                 "
               >
-                {isSelected ? "Close" : "Explore"}
+                {category.title === "Sorting"
+                  ? "Open Visualization"
+                  : isSelected
+                    ? "Close"
+                    : "Explore"}
 
                 <ChevronRight
                   size={15}
@@ -325,11 +376,13 @@ export default function CategoriesSection() {
                 text-slate-500
               "
             >
-              Select an algorithm to open its visualizer.
+              Click an algorithm to open its visualizer.
             </p>
           </div>
 
-          {/* Algorithm buttons */}
+          {/* =====================================================
+              ALGORITHM CARDS
+          ====================================================== */}
 
           <div
             className="
@@ -349,13 +402,15 @@ export default function CategoriesSection() {
                   key={algorithm}
                   type="button"
                   onClick={() =>
-                    handleAlgorithmClick(
-                      algorithm
-                    )
+                    handleAlgorithmClick(algorithm)
                   }
                   className="
                     group
+                    relative
                     flex
+                    min-h-[64px]
+                    w-full
+                    cursor-pointer
                     items-center
                     justify-between
                     rounded-xl
@@ -369,8 +424,14 @@ export default function CategoriesSection() {
                     hover:-translate-y-0.5
                     hover:border-cyan-400/50
                     hover:bg-cyan-500/[0.04]
+                    hover:shadow-[0_0_20px_rgba(34,211,238,0.08)]
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-cyan-400/30
                   "
                 >
+                  {/* Algorithm name */}
+
                   <span
                     className="
                       font-medium
@@ -382,15 +443,38 @@ export default function CategoriesSection() {
                     {algorithm}
                   </span>
 
-                  <ChevronRight
-                    size={16}
+                  {/* Arrow */}
+
+                  <span
                     className="
-                      text-slate-600
+                      flex
+                      h-7
+                      w-7
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-lg
+                      border
+                      border-slate-800
+                      bg-slate-900
                       transition-all
-                      group-hover:translate-x-1
-                      group-hover:text-cyan-400
+                      duration-300
+                      group-hover:border-cyan-400/30
+                      group-hover:bg-cyan-400/10
+                      group-hover:text-cyan-300
                     "
-                  />
+                  >
+                    <ChevronRight
+                      size={16}
+                      className="
+                        text-slate-600
+                        transition-all
+                        duration-300
+                        group-hover:translate-x-0.5
+                        group-hover:text-cyan-400
+                      "
+                    />
+                  </span>
                 </button>
               ))}
           </div>

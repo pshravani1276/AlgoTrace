@@ -19,7 +19,6 @@ import Sorting from "./pages/Sorting";
 
 // ============================================================
 // WORKING SORTING PAGES
-// Keep these exactly as your current working pages.
 // ============================================================
 
 import BubbleSort from "./pages/BubbleSort";
@@ -30,17 +29,24 @@ import QuickSort from "./pages/QuickSort";
 import HeapSort from "./pages/HeapSort";
 
 // ============================================================
+// GRAPH VISUALIZERS
+// ============================================================
+
+import BFSVisualizer from "./pages/Graph/BFS";
+import DFSVisualizer from "./pages/Graph/DFS";
+import AStarVisualizer from "./pages/Graph/AStar";
+import AOStarVisualizer from "./pages/Graph/AOStar";
+import AdvancedGraphVisualizer from "./pages/Graph/AdvancedGraph";
+
+// ============================================================
 // OTHER PAGES
-//
-// lazy loading prevents one broken page export from crashing
-// the entire application while the rest of the project runs.
 // ============================================================
 
 const Searching = lazy(() =>
   import("./pages/Searching").then((module) => ({
     default:
       module.default ??
-      (module as any).Searching ??
+      ((module as any).Searching as React.ComponentType) ??
       PageFallback,
   })),
 );
@@ -49,17 +55,17 @@ const Tree = lazy(() =>
   import("./pages/Tree").then((module) => ({
     default:
       module.default ??
-      (module as any).Tree ??
+      ((module as any).Tree as React.ComponentType) ??
       PageFallback,
   })),
 );
 
+// IMPORTANT:
+// Explicitly load Graph/index.tsx.
+// This avoids resolving another Graph.tsx file.
 const Graph = lazy(() =>
-  import("./pages/Graph").then((module) => ({
-    default:
-      module.default ??
-      (module as any).Graph ??
-      PageFallback,
+  import("./pages/Graph/index").then((module) => ({
+    default: module.default,
   })),
 );
 
@@ -127,11 +133,13 @@ function PageLoading() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950">
       <div className="text-center">
+
         <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-slate-700 border-t-cyan-400" />
 
         <p className="mt-4 text-sm text-slate-400">
           Loading AlgoTrace...
         </p>
+
       </div>
     </div>
   );
@@ -144,7 +152,9 @@ function PageLoading() {
 export default function App() {
   return (
     <BrowserRouter>
+
       <Suspense fallback={<PageLoading />}>
+
         <Routes>
 
           {/* ==================================================
@@ -167,7 +177,7 @@ export default function App() {
           />
 
           {/* ==================================================
-              DASHBOARD
+              DEFAULT
           ================================================== */}
 
           <Route
@@ -179,6 +189,10 @@ export default function App() {
               />
             }
           />
+
+          {/* ==================================================
+              DASHBOARD
+          ================================================== */}
 
           <Route
             path="/dashboard"
@@ -251,10 +265,73 @@ export default function App() {
             element={<Tree />}
           />
 
+          {/* ==================================================
+              GRAPH CATEGORY
+          ================================================== */}
+
           <Route
             path="/graph"
             element={<Graph />}
           />
+
+          {/* ==================================================
+              BREADTH FIRST SEARCH
+          ================================================== */}
+
+          <Route
+            path="/graph/bfs"
+            element={<BFSVisualizer />}
+          />
+          {/* ==================================================
+              DEPTH FIRST SEARCH
+          ================================================== */}
+
+          <Route
+            path="/graph/dfs"
+            element={<DFSVisualizer />}
+          />
+
+          {/* ==================================================
+              A* STAR
+          ================================================== */}
+
+          <Route
+            path="/graph/a-star"
+            element={<AStarVisualizer />}
+          />
+
+          {/* ==================================================
+              AO* STAR
+          ================================================== */}
+
+          <Route
+            path="/graph/ao-star"
+            element={<AOStarVisualizer />}
+          />
+
+          <Route
+            path="/graph/bellman-ford"
+            element={<AdvancedGraphVisualizer algorithmId="bellman-ford" />}
+          />
+
+          <Route
+            path="/graph/topological-kahn"
+            element={<AdvancedGraphVisualizer algorithmId="topological-kahn" />}
+          />
+
+          <Route
+            path="/graph/topological-dfs"
+            element={<AdvancedGraphVisualizer algorithmId="topological-dfs" />}
+          />
+
+          <Route
+            path="/graph/dag-shortest-path"
+            element={<AdvancedGraphVisualizer algorithmId="dag-shortest-path" />}
+          />
+
+          {/* ==================================================
+              ARRAYS
+          ================================================== */}
 
           <Route
             path="/arrays"
@@ -277,7 +354,7 @@ export default function App() {
 
           {/* ==================================================
               OLD SORTING LINKS
-              Keep these so previous links continue working.
+              Keep these working.
           ================================================== */}
 
           <Route
@@ -355,7 +432,9 @@ export default function App() {
           />
 
         </Routes>
+
       </Suspense>
+
     </BrowserRouter>
   );
 }

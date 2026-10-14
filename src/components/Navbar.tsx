@@ -324,6 +324,37 @@ export default function Navbar() {
                   </p>
                 </div>
 
+                {/* ARRAYS */}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigate("/arrays");
+                    setShowCategories(false);
+                  }}
+                  className="
+                    w-full
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-left
+                    text-sm
+                    font-medium
+                    text-slate-200
+                    transition
+                    hover:bg-cyan-500/10
+                    hover:text-cyan-400
+                  "
+                >
+                  <div className="flex items-center justify-between">
+                    <span>Arrays</span>
+
+                    <span className="text-xs text-slate-500">
+                      Data Structures
+                    </span>
+                  </div>
+                </button>
+
                 {/* SORTING */}
 
                 <button

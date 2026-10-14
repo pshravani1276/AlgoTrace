@@ -36,20 +36,23 @@ export default function CategoryCard({
 
   const Icon = icon || defaultIcons[title] || Layers3;
 
+  /*
+   * =====================================================
+   * CARD CLICK
+   * =====================================================
+   *
+   * The ENTIRE category card is clickable.
+   *
+   * Sorting -> Merge Sort visualization
+   *
+   * There is NO separate Open button required.
+   */
   const handleClick = () => {
-    /*
-     * Sorting category must open the sorting page
-     * instead of returning to dashboard.
-     */
     if (title === "Sorting") {
-      navigate("/sorting/merge-sort");
+      navigate("/merge-sort");
       return;
     }
 
-    /*
-     * If another category provides its own route,
-     * use that route.
-     */
     if (path) {
       navigate(path);
       return;
@@ -81,6 +84,7 @@ export default function CategoryCard({
         focus:outline-none
         focus:ring-2
         focus:ring-cyan-400/40
+        cursor-pointer
       "
     >
       {/* Glow */}
@@ -175,7 +179,7 @@ export default function CategoryCard({
             group-hover:text-cyan-400
           "
         >
-          Explore
+          Open Visualization
         </span>
 
         <div
